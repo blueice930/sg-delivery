@@ -68,7 +68,6 @@ export const ItemsProvider = ({ children } : any) => {
         const { data: { items: itemsData, totalCount: totalCountData } } = data;
         setItems(itemsData);
         setTotalCount(totalCountData);
-        setAlert({ title: 'fetch-failed', message: 'Something wrong with the network', details: 'Get items failed' });
         setLoading(false);
       } catch (e) {
         setSeverity(Severity.ERROR);
