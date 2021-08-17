@@ -3,7 +3,8 @@ const Routes = {
   login: '/login',
   about: '/about',
   shop: '/shop',
-  user: '/user'
-}
+  user: '/user',
+  order: '/order',
+};
 
 export default Routes;

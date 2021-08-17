@@ -1,11 +1,16 @@
-import React from 'react'
+import React, { useRef, useState } from 'react';
 
-const Order = () => {
-  return (
+import { ItemsProvider } from 'src/contexts/ItemContext';
+import AddItemModal from 'src/components/AddItemModal';
+import ItemsView from 'src/components/ItemsView';
+
+const Order = () => (
+  <ItemsProvider>
     <div>
-      Order page
+      <ItemsView />
+      <AddItemModal />
     </div>
-  )
-}
+  </ItemsProvider>
+);
 
-export default Order
+export default Order;
