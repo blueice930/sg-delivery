@@ -52,7 +52,7 @@ export const createItemFn = async (data:any, context: CallableContext) => {
   const userRef = db.collection('users').doc(userId);
   batch.update(userRef, {itemUids: firestore.FieldValue.arrayUnion(uid)});
 
-  const itemRef = db.collection('item').doc(uid);
+  const itemRef = db.collection('items').doc(uid);
   batch.set(itemRef, item);
 
   const res = await batch.commit();
