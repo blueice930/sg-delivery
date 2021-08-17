@@ -8,7 +8,7 @@ import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 
 import { useItems } from 'src/contexts/ItemContext';
-import ErrorAlertMsg from 'src/components/ErrorAlertMsg';
+import AlertMsg, { Severity } from 'src/components/AlertMsg';
 import { Item } from 'src/types/item';
 import { Typography } from '@material-ui/core';
 
@@ -22,7 +22,7 @@ const DEFAULT_PAGE_SIZE: number = 10;
 
 const ItemsView = () => {
   const {
-    items, error, totalCount, getItemWithPagination,
+    items, alert, severity, totalCount, getItemWithPagination,
   } = useItems();
   const [currPage, setCurrPage] = useState(0);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
@@ -105,20 +105,14 @@ const ItemsView = () => {
     await getItemWithPagination(cursor);
   }, [items]);
 
-  const handlePrevPage = async () => {
-    console.log('prev p');
-  };
-
   const handlePageOnChange = useCallback(async (page: number) => {
     const tempCurrPage = currPage;
     setCurrPage(page);
     if (page * pageSize >= items.length) {
       await handleNextPage();
-      return;
     }
-    if (page < tempCurrPage) {
-      await handlePrevPage();
-    }
+    // TODO
+    // if (page < tempCurrPage) {}
   },
   [currPage, items, pageSize]);
 
@@ -127,7 +121,7 @@ const ItemsView = () => {
       <Typography variant="h4" color="textPrimary" align="center">
         Active Items
       </Typography>
-      <ErrorAlertMsg error={error} />
+      <AlertMsg alertMsg={alert} severity={severity} />
       <DataGrid
         autoHeight
         sortingMode="server"

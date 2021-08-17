@@ -20,7 +20,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import CopyRight from 'src/components/CopyRight';
 import { useAuth } from 'src/contexts/AuthContext';
-import ErrorAlertMsg from 'src/components/ErrorAlertMsg';
+import AlertMsg, { Severity } from 'src/components/AlertMsg';
 
 const StyledIcon = styled(FontAwesomeIcon)`
   margin: 5px;
@@ -132,7 +132,7 @@ const Login = () => {
           <Typography component="h1" variant="h5">
             { isSignUp ? 'Sign up' : 'Sign in'}
           </Typography>
-          <ErrorAlertMsg error={error} />
+          <AlertMsg alertMsg={error} severity={Severity.ERROR} />
           <form className={classes.form} noValidate onSubmit={(e) => handleSubmit(e)}>
             <Grid container spacing={2}>
               {isSignUp && (

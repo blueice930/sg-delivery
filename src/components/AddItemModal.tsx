@@ -1,11 +1,13 @@
-import React, { useRef, useState } from 'react';
+import React, {
+  useCallback, useEffect, useRef, useState,
+} from 'react';
 import {
   Button, CircularProgress, Dialog, DialogActions, DialogContent,
   DialogContentText, DialogTitle, Grid, makeStyles, Modal, Paper, TextField, Theme,
 } from '@material-ui/core';
 
 import { useItems } from 'src/contexts/ItemContext';
-import ErrorAlertMsg from 'src/components/ErrorAlertMsg';
+import AlertMsg, { Severity } from 'src/components/AlertMsg';
 
 const useStyles = makeStyles((muiTheme: Theme) => ({
   root: {},
@@ -27,7 +29,8 @@ const AddItemModal = () => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [error, setError] = useState<any>({});
+  const [alert, setAlert] = useState<any>({});
+  const [severity, setSeverity] = useState<Severity>(Severity.ERROR);
   const { addItem } = useItems();
 
   const companyRef = useRef<HTMLInputElement>(null);
@@ -35,6 +38,7 @@ const AddItemModal = () => {
   const itemNameRef = useRef<HTMLInputElement>(null);
   const itemQuantityRef = useRef<HTMLInputElement>(null);
   const commentsRef = useRef<HTMLInputElement>(null);
+  const addBtnRef = useRef<HTMLButtonElement>(null);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -42,11 +46,12 @@ const AddItemModal = () => {
 
   const handleClose = () => {
     setOpen(false);
-    setError({});
+    setAlert({});
   };
 
-  const handleAddItem = async () => {
+  const handleAddItem = useCallback(async () => {
     setIsSaving(true);
+    setAlert({});
     const deliveryCompany = companyRef?.current?.value;
     const packageId = packageIdRef?.current?.value;
     const itemName = itemNameRef?.current?.value;
@@ -61,15 +66,18 @@ const AddItemModal = () => {
         itemQuantity,
         comments,
       });
-      setTimeout(() => {
-        setIsSaving(false);
-        setOpen(false);
-      }, 3000);
+      setIsSaving(false);
+      setOpen(false);
     } catch (e) {
       setIsSaving(false);
-      setError(e);
+      setSeverity(Severity.ERROR);
+      setAlert({
+        title: e?.code,
+        message: e?.message,
+        details: e?.details,
+      });
     }
-  };
+  }, [alert]);
 
   return (
     <div>
@@ -84,7 +92,7 @@ const AddItemModal = () => {
           <DialogContentText>
             To add Package, please make sure you have a Package Delivery Number.
           </DialogContentText>
-          <ErrorAlertMsg error={error} />
+          <AlertMsg alertMsg={alert} severity={severity} />
           <Modal
             open={isSaving}
             aria-labelledby="simple-modal-title"
@@ -93,7 +101,14 @@ const AddItemModal = () => {
           >
             <CircularProgress size={50} color="secondary" />
           </Modal>
-          <Paper className={classes.form}>
+          <Paper
+            className={classes.form}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                addBtnRef.current?.click();
+              }
+            }}
+          >
             <Grid container spacing={6}>
               <Grid item xs={12} sm={6}>
                 <TextField
@@ -160,7 +175,12 @@ const AddItemModal = () => {
           <Button onClick={handleClose} variant="outlined" color="secondary">
             Cancel
           </Button>
-          <Button onClick={handleAddItem} variant="contained" color="primary">
+          <Button
+            onClick={handleAddItem}
+            variant="contained"
+            color="primary"
+            ref={addBtnRef}
+          >
             Confirm
           </Button>
         </DialogActions>
