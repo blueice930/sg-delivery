@@ -1,5 +1,5 @@
 import React, {
-  useCallback, useEffect, useRef, useState,
+  useCallback, useRef, useState,
 } from 'react';
 import {
   Button, CircularProgress, Dialog, DialogActions, DialogContent,
@@ -196,6 +196,7 @@ const AddItemModal = () => {
             variant="contained"
             color="primary"
             ref={addBtnRef}
+            disabled={isSaving}
           >
             Confirm
           </Button>

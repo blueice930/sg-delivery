@@ -26,3 +26,8 @@ export enum ItemStatus {
   EXPIRED = 'EXPIRED',
   UNKNOWN = 'UNKNOWN',
 }
+
+export const LiveItemStatus = [
+  ItemStatus.CREATED,
+  ItemStatus.ARRIVED_WAREHOUSE,
+];

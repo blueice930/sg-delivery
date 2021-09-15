@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React from 'react';
 
 import { ItemsProvider } from 'src/contexts/ItemContext';
 import ItemsView from 'src/components/ItemsView';
@@ -18,12 +18,12 @@ const StyledBtnGroup = styled.div`
 const Item = () => (
   <ItemsProvider>
     <OrdersProvider>
+      <AlertGroup />
       <ItemsView />
       <StyledBtnGroup>
         <AddItemModal />
         <CreateOrderBtn />
       </StyledBtnGroup>
-      <AlertGroup />
     </OrdersProvider>
   </ItemsProvider>
 );

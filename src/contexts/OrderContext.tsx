@@ -4,7 +4,7 @@ import React, {
 import { Severity } from 'src/components/AlertMsg';
 import Loading from 'src/components/Loading';
 import { Order } from 'src/types/order';
-import { createOrder } from 'src/firebase';
+import { createOrder as createOrderAPICall } from 'src/firebase';
 import { Item, ItemStatus } from 'src/types/item';
 import { useItems } from './ItemContext';
 
@@ -17,14 +17,13 @@ export const OrdersProvider = ({ children } : any) => {
   const [alert, setAlert] = useState<any>({});
   const [totalCount, setTotalCount] = useState(0);
   const [orders, setOrders] = useState<Order[]>([]);
-  const [loading, setLoading] = useState(false);
-  const { items, selectedItemUids } = useItems();
+  const { activeItems, selectedItemUids } = useItems();
 
   const getOrderWithPagination = useCallback(async () => {
 
   }, [orders]);
 
-  const handleCreateOrder = useCallback(async () => {
+  const createOrder = useCallback(async () => {
     if (!selectedItemUids.length) {
       setSeverity(Severity.ERROR);
       setAlert({
@@ -35,7 +34,7 @@ export const OrdersProvider = ({ children } : any) => {
       return;
     }
     // Check item status: ARRIVED_WAREHOUSE
-    const statuses = items.filter((item: Item) => (
+    const statuses = activeItems.filter((item: Item) => (
       selectedItemUids.includes(item.uid)
     )).map((item: Item) => item.status);
     const allHasArrivedWarehouse = statuses.every((s: ItemStatus) => (
@@ -51,10 +50,15 @@ export const OrdersProvider = ({ children } : any) => {
       return;
     }
     try {
-      const { data } = await createOrder({ itemUids: selectedItemUids });
+      const { data } = await createOrderAPICall({ itemUids: selectedItemUids });
       // TODO: if not success?
-      if (data?.success) {
-        // move items to Combined Items
+      if (true) {
+        setSeverity(Severity.SUCCESS);
+        setAlert({
+          title: 'Success',
+          message: 'Order Created successfully!',
+          details: '🎉',
+        });
       }
     } catch (e: any) {
       setSeverity(Severity.ERROR);
@@ -65,19 +69,19 @@ export const OrdersProvider = ({ children } : any) => {
       });
       console.error(e);
     }
-  }, [selectedItemUids, items]);
+  }, [selectedItemUids, activeItems]);
 
   const value = {
     orders,
     alert,
     severity,
     totalCount,
-    handleCreateOrder,
+    createOrder,
   };
 
   return (
     <OrderContext.Provider value={value}>
-      {loading ? <Loading /> : children}
+      {children}
     </OrderContext.Provider>
   );
 };

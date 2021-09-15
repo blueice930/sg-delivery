@@ -1,5 +1,5 @@
 import initFirebase from '../../helpers/initFirebase';
-import {getItemsFn} from './getItemsFn';
+import {getActiveItemsFn} from './getItemsFn';
 import {createItemFn} from './createItemFn';
 import {deleteItemFn} from './deleteItemFn';
 import {updateItemFn} from './updateItemFn';
@@ -7,13 +7,13 @@ import {functions} from '../../helpers/initFirebaseFunctions';
 
 initFirebase();
 
-const getItems = functions.onCall(getItemsFn);
+const getActiveItems = functions.onCall(getActiveItemsFn);
 const createItem = functions.onCall(createItemFn);
 const deleteItem = functions.onCall(deleteItemFn);
 const updateItem = functions.onCall(updateItemFn);
 
 export {
-  getItems,
+  getActiveItems,
   createItem,
   deleteItem,
   updateItem,

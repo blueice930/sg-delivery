@@ -6,6 +6,7 @@ const Shop = () => {
   return (
     <div>
       Shop page
+      {abc}
       <Button
         variant="contained"
         color="primary"

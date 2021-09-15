@@ -28,7 +28,7 @@ const getOrders = functions.httpsCallable('order-getOrders');
 
 const createItem = functions.httpsCallable('item-createItem');
 const updateItem = functions.httpsCallable('item-updateItem');
-const getItems = functions.httpsCallable('item-getItems');
+const getActiveItems = functions.httpsCallable('item-getActiveItems');
 
 export {
   registerUser,
@@ -38,7 +38,7 @@ export {
   getOrders,
   createItem,
   updateItem,
-  getItems,
+  getActiveItems,
   fetchUser,
 };
 

@@ -19,6 +19,11 @@ export const AuthProvider = ({ children } : any) => {
     const { data } = await fetchUser({ email });
     const { success, data: { user: userData, storageAddress } } = data;
 
+    if (!success) {
+      console.error('Something wrong. Please login again');
+      // alert('Something wrong');
+    }
+
     const user: User = {
       ...userData,
     };
@@ -76,7 +81,8 @@ export const AuthProvider = ({ children } : any) => {
   );
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+    // unsubscribe??: const unsubscribe =
+    auth.onAuthStateChanged(async (user) => {
       if (user && user.email && isEmpty(currUser)) {
         await fetchUserInfo(user.email);
       }

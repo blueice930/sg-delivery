@@ -17,16 +17,13 @@ const Container = styled.div`
   }
 `;
 
-const Loading = () => {
-  const abc = 123;
-  return (
-    <Container>
-      <CircularProgress size={50} />
-      <div className="loading">
-        Loading
-      </div>
-    </Container>
-  );
-};
+const Loading = () => (
+  <Container>
+    <CircularProgress size={50} />
+    <div className="loading">
+      Loading
+    </div>
+  </Container>
+);
 
 export default Loading;

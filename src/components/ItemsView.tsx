@@ -1,17 +1,15 @@
-import { DataGrid, GridColDef } from '@material-ui/data-grid';
+import { DataGrid, GridColDef, GridFilterModel } from '@material-ui/data-grid';
 import React, { useCallback, useState } from 'react';
-import firebaseApp from 'firebase/app';
-import styled from 'styled-components';
 import jstz from 'jstz';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
+import {
+  makeStyles, Paper, Theme, Typography, Switch,
+} from '@material-ui/core';
 
 import { useItems } from 'src/contexts/ItemContext';
-import { Item } from 'src/types/item';
-import {
-  makeStyles, Paper, Theme, Typography,
-} from '@material-ui/core';
+import { Item, ItemStatus } from 'src/types/item';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -21,25 +19,37 @@ const useStyles = makeStyles((muiTheme: Theme) => ({
     margin: muiTheme.spacing(1),
     padding: muiTheme.spacing(2),
   },
+  switchGroup: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontWeight: 'normal',
+  },
 }));
 
 const DEFAULT_PAGE_SIZE: number = 10;
+const emptyFilter: GridFilterModel = { items: [] };
+const readyItemFilter: GridFilterModel = {
+  items: [{
+    columnField: 'status', operatorValue: 'equals', value: ItemStatus.ARRIVED_WAREHOUSE,
+  }],
+};
 
 const ItemsView = () => {
   const {
-    items, totalCount, getItemWithPagination, setSelectedItemUids,
+    activeItems, totalCount, getItemWithPagination, setSelectedItemUids,
   } = useItems();
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
+  const [useFilter, setUseFilter] = useState(false);
 
   const classes = useStyles();
 
-  const rows = items.map(({
+  const rows = activeItems.map(({
     uid,
     packageId,
     deliveryCompany,
     status,
     itemName,
-    itemQuantity,
     deliveryPrice,
     createdAt,
   }: Item, index: number) => ({
@@ -49,7 +59,6 @@ const ItemsView = () => {
     deliveryCompany,
     status,
     itemName,
-    itemQuantity,
     deliveryPrice,
     createdAt,
   }));
@@ -79,13 +88,6 @@ const ItemsView = () => {
       flex: 0.8,
     },
     {
-      field: 'itemQuantity',
-      headerName: 'Quantity',
-      description: 'Item Quantity',
-      type: 'number',
-      minWidth: 140,
-    },
-    {
       field: 'status',
       headerName: 'Status',
       description: 'Package Status',
@@ -94,7 +96,7 @@ const ItemsView = () => {
         const valueFormatted = status?.charAt(0) + status.slice(1).toLowerCase();
         return valueFormatted;
       },
-      minWidth: 130,
+      minWidth: 150,
     },
     {
       field: 'deliveryPrice',
@@ -119,24 +121,27 @@ const ItemsView = () => {
   ];
 
   const handleNextPage = useCallback(async () => {
-    const cursor = items[items.length - 1]?.uid || '';
+    const cursor = activeItems[activeItems.length - 1]?.uid || '';
     await getItemWithPagination(cursor);
-  }, [items]);
+  }, [activeItems]);
 
   const handlePageOnChange = useCallback(async (page: number) => {
-    if (page * pageSize >= items.length) {
+    // page start with 0.
+    if ((page + 1) * pageSize >= activeItems.length) {
       await handleNextPage();
     }
-    // TODO
-    // if (page < tempCurrPage) {}
   },
-  [items, pageSize]);
+  [activeItems, pageSize]);
 
   return (
     <Paper className={classes.root}>
       <Typography variant="h4" color="textPrimary" align="center">
-        Active Items
+        Active Packages
       </Typography>
+      <div className={classes.switchGroup}>
+        <Switch checked={useFilter} onChange={() => { setUseFilter(!useFilter); }} color="secondary" />
+        <div>Ready Packages</div>
+      </div>
       <DataGrid
         autoHeight
         sortingMode="server"
@@ -147,11 +152,11 @@ const ItemsView = () => {
         onPageSizeChange={(pSize: number) => { setPageSize(pSize); }}
         rowsPerPageOptions={[DEFAULT_PAGE_SIZE, 25, 50]}
         checkboxSelection
-        disableColumnFilter
         onPageChange={handlePageOnChange}
         onSelectionModelChange={(ids) => {
-          setSelectedItemUids(ids.map((id: any) => (items[id - 1]?.uid) || []));
+          setSelectedItemUids(ids.map((id: any) => (activeItems[id - 1]?.uid) || []));
         }}
+        filterModel={useFilter ? readyItemFilter : emptyFilter}
       />
     </Paper>
   );

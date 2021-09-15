@@ -1,11 +1,11 @@
 import {firestore} from 'firebase-admin';
 import {CallableContext} from 'firebase-functions/v1/https';
 import {https} from '../../helpers/initFirebaseFunctions';
-import {FunctionResponse} from '../../helpers/types';
-import {Item, ItemStatus, LiveItemStatus} from './types';
+import { FunctionResponse } from '../../helpers/types';
+import {Item, LiveItemStatus} from './types';
 
 
-export const getItemsFn = async (data: any, context: CallableContext) => {
+export const getActiveItemsFn = async (data: any, context: CallableContext) => {
   if (!context.auth) {
     // Throwing an HttpsError so that the client gets the error details.
     throw new https.HttpsError('unauthenticated',
@@ -27,7 +27,7 @@ export const getItemsFn = async (data: any, context: CallableContext) => {
         .where('status', 'in', LiveItemStatus)
         .orderBy('createdAt', 'asc')
         .startAfter(cursorRef)
-        .limit(50)
+        .limit(80)
         .get();
     itemsSnapshot.forEach((itemData) => {
       const data = itemData.data();
@@ -51,7 +51,7 @@ export const getItemsFn = async (data: any, context: CallableContext) => {
       };
       items.push(item);
     });
-  } catch (e: any) {
+  } catch (e) {
     throw new https.HttpsError('unknown',
         'Error getting documents', e?.message);
   }
