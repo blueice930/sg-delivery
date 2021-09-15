@@ -1,16 +1,15 @@
-import React, { useRef, useState } from 'react';
+import React from 'react';
+import { OrdersProvider } from 'src/contexts/OrderContext';
 
-import { ItemsProvider } from 'src/contexts/ItemContext';
-import AddItemModal from 'src/components/AddItemModal';
-import ItemsView from 'src/components/ItemsView';
-
-const Order = () => (
-  <ItemsProvider>
-    <div>
-      <ItemsView />
-      <AddItemModal />
-    </div>
-  </ItemsProvider>
-);
+const Order = () => {
+  const abc = 123;
+  return (
+    <OrdersProvider>
+      <div>
+        Order page
+      </div>
+    </OrdersProvider>
+  );
+};
 
 export default Order;

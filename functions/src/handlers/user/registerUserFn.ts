@@ -14,6 +14,8 @@ export const registerUserFn = async (data:any, context: CallableContext) => {
   const fname = data?.fname;
   const lname = data?.lname;
   const email = data?.email;
+  const address = data?.address;
+
   const fullname = `${fname} ${lname}`;
   const user: User = {
     id: uid,
@@ -21,6 +23,7 @@ export const registerUserFn = async (data:any, context: CallableContext) => {
     fname,
     lname,
     email,
+    address,
     wallet: {balanceCent: 0},
   };
   const db = firestore();

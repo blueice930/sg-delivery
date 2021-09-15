@@ -3,6 +3,8 @@ export interface Order {
   userId: string,
   itemUids: string[],
   status: OrderStatus,
+  createdAt: number,
+  updatedAt: number,
 }
 
 export enum OrderStatus {

@@ -5,6 +5,7 @@ import {
   Button, CircularProgress, Dialog, DialogActions, DialogContent,
   DialogContentText, DialogTitle, Grid, makeStyles, Modal, Paper, TextField, Theme,
 } from '@material-ui/core';
+import { toNumber } from 'lodash';
 
 import { useItems } from 'src/contexts/ItemContext';
 import AlertMsg, { Severity } from 'src/components/AlertMsg';
@@ -37,6 +38,7 @@ const AddItemModal = () => {
   const packageIdRef = useRef<HTMLInputElement>(null);
   const itemNameRef = useRef<HTMLInputElement>(null);
   const itemQuantityRef = useRef<HTMLInputElement>(null);
+  const itemPriceRef = useRef<HTMLInputElement>(null);
   const commentsRef = useRef<HTMLInputElement>(null);
   const addBtnRef = useRef<HTMLButtonElement>(null);
 
@@ -55,7 +57,8 @@ const AddItemModal = () => {
     const deliveryCompany = companyRef?.current?.value;
     const packageId = packageIdRef?.current?.value;
     const itemName = itemNameRef?.current?.value;
-    const itemQuantity = itemQuantityRef?.current?.value;
+    const itemQuantity = toNumber(itemQuantityRef?.current?.value);
+    const itemPrice = toNumber(itemPriceRef?.current?.value);
     const comments = commentsRef?.current?.value;
 
     try {
@@ -64,11 +67,12 @@ const AddItemModal = () => {
         packageId,
         itemName,
         itemQuantity,
+        itemPrice,
         comments,
       });
       setIsSaving(false);
       setOpen(false);
-    } catch (e) {
+    } catch (e: any) {
       setIsSaving(false);
       setSeverity(Severity.ERROR);
       setAlert({
@@ -113,29 +117,6 @@ const AddItemModal = () => {
               <Grid item xs={12} sm={6}>
                 <TextField
                   autoFocus
-                  margin="dense"
-                  id="deliveryCompany"
-                  label="Delivery Company"
-                  type="text"
-                  fullWidth
-                  inputRef={companyRef}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  autoFocus
-                  required
-                  margin="dense"
-                  id="packageId"
-                  label="Package Number:"
-                  type="number"
-                  fullWidth
-                  inputRef={packageIdRef}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  autoFocus
                   required
                   margin="dense"
                   id="itemName"
@@ -155,6 +136,41 @@ const AddItemModal = () => {
                   type="number"
                   fullWidth
                   inputRef={itemQuantityRef}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  autoFocus
+                  required
+                  margin="dense"
+                  id="itemPrice"
+                  label="Item Price"
+                  type="number"
+                  fullWidth
+                  inputRef={itemPriceRef}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  autoFocus
+                  required
+                  margin="dense"
+                  id="packageId"
+                  label="Package Number:"
+                  type="text"
+                  fullWidth
+                  inputRef={packageIdRef}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  id="deliveryCompany"
+                  label="Delivery Company"
+                  type="text"
+                  fullWidth
+                  inputRef={companyRef}
                 />
               </Grid>
               <Grid item xs={12} sm={12}>

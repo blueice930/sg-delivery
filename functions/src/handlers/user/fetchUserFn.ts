@@ -14,12 +14,24 @@ export const fetchUserFn = async (data: any, context: CallableContext) => {
   const {auth: {uid}} = context;
   const db = firestore();
   const userRef = db.collection('users').doc(uid);
+  const configRef = db.collection('configs').doc('basic');
   const userSnapshot = await userRef.get();
+  const configSnapshot = await configRef.get();
   const isUserExists = await userSnapshot.exists;
   if (!isUserExists) {
-    // TODO: // maybe: userRef.set({id: uid, email});
+    const emptyUser = {
+      id: uid,
+      email,
+    };
+    userRef.set(emptyUser);
+    const EmptyUserResponse: FunctionResponse = {
+      success: true,
+      data: {emptyUser},
+    };
+    return EmptyUserResponse;
   }
   const result = userSnapshot.data();
+  const config = configSnapshot.data();
   const user: User = {
     id: result?.id,
     email: result?.email,
@@ -27,13 +39,16 @@ export const fetchUserFn = async (data: any, context: CallableContext) => {
     lname: result?.lname,
     displayName: result?.displayName,
     age: result?.age,
+    address: result?.address,
     phone: result?.phone,
     wallet: result?.wallet,
+    admin: result?.admin || false,
   };
+  const storageAddress = config?.storageAddress;
 
   const response: FunctionResponse = {
     success: true,
-    data: user,
+    data: {user, storageAddress},
   };
   return response;
 };

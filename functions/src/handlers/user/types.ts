@@ -7,8 +7,11 @@ export interface User {
   age?: number,
   phone?: string,
   wallet: Wallet,
+  address: string[],
   itemUids?: string[],
   orderUids?: string[],
+  admin?: boolean,
+  storageAddress?: string,
 }
 
 export interface Wallet {

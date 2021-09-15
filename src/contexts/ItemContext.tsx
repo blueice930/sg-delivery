@@ -12,6 +12,7 @@ export const useItems = () => useContext(ItemContext);
 
 export const ItemsProvider = ({ children } : any) => {
   const [items, setItems] = useState<Item[]>([]);
+  const [selectedItemUids, setSelectedItemUids] = useState<string[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [alert, setAlert] = useState<any>({});
@@ -29,12 +30,14 @@ export const ItemsProvider = ({ children } : any) => {
     packageId,
     itemName,
     itemQuantity,
+    itemPrice,
     comments,
   }: {
     deliveryCompany: string,
     packageId: string,
     itemName: string,
-    itemQuantity: string,
+    itemQuantity: number,
+    itemPrice: number,
     comments: string,
   }) => {
     setAlert({});
@@ -43,8 +46,10 @@ export const ItemsProvider = ({ children } : any) => {
       packageId,
       itemName,
       itemQuantity,
+      itemPrice,
       comments,
     });
+    // TODO if not success?
     if (data?.success) {
       const item: Item = data?.data;
       setItems([...items, item]);
@@ -55,11 +60,12 @@ export const ItemsProvider = ({ children } : any) => {
         details: '🎉',
       });
     }
-  }, [items]);
+  }, [items, alert, severity]);
 
   useEffect(() => {
     const getItemsFnCall = async () => {
       try {
+        // TODO: NOT PAGINATED ON FIRST FETCH.
         const { data } = await getItems();
         if (!data?.success) {
           setSeverity(Severity.ERROR);
@@ -69,7 +75,7 @@ export const ItemsProvider = ({ children } : any) => {
         setItems(itemsData);
         setTotalCount(totalCountData);
         setLoading(false);
-      } catch (e) {
+      } catch (e: any) {
         setSeverity(Severity.ERROR);
         setAlert({
           title: e?.code,
@@ -89,6 +95,8 @@ export const ItemsProvider = ({ children } : any) => {
     totalCount,
     getItemWithPagination,
     addItem,
+    selectedItemUids,
+    setSelectedItemUids,
   };
 
   return (

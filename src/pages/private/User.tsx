@@ -2,23 +2,16 @@ import React, { useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import Alert from '@material-ui/lab/Alert';
+import clsx from 'clsx';
 import { isEmpty } from 'lodash';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 import { useAuth } from 'src/contexts/AuthContext';
-// import {
-//   registerUser,
-//   updateUser,
-//   topUp,
-//   createOrder,
-//   getOrders,
-//   createItem,
-//   updateItem,
-//   getItems,
-// } from 'src/firebase';
 import {
   CircularProgress, Grid, makeStyles, Paper,
   TextField, Theme, Typography,
 } from '@material-ui/core';
+import theme from 'src/theme';
 
 const useStyles = makeStyles((muiTheme: Theme) => ({
   root: {
@@ -37,6 +30,9 @@ const useStyles = makeStyles((muiTheme: Theme) => ({
     },
     maxWidth: '500px',
   },
+  storageAddress: {
+    width: '500px',
+  },
   loading: {
     marginLeft: '5px',
   },
@@ -50,7 +46,11 @@ const User = () => {
   const [error, setError] = useState('');
   const [isViewing, setIsViewing] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const { currUser, logout, updateUserInfo } = useAuth();
+  const [isCopied, setIsCopied] = useState(false);
+  const {
+    currUser, logout, updateUserInfo, storageAddr,
+  } = useAuth();
+  const userStorageAddr = `${storageAddr}-${currUser?.id?.slice(0, 6)}`;
   const history = useHistory();
   const classes = useStyles();
 
@@ -59,6 +59,7 @@ const User = () => {
   const fullnameRef = useRef<HTMLInputElement>(null);
   const phoneRef = useRef<HTMLInputElement>(null);
   const ageRef = useRef<HTMLInputElement>(null);
+  const addressRef = useRef<HTMLInputElement>(null);
 
   const handleLogout = async () => {
     setError('');
@@ -77,12 +78,14 @@ const User = () => {
       const fullname = fullnameRef?.current?.value;
       const phone = phoneRef?.current?.value;
       const age = ageRef?.current?.value;
+      const address = addressRef?.current?.value;
       const dirtyProps = {
         ...(fname !== currUser.fname) && { fname },
         ...(lname !== currUser.lname) && { lname },
         ...(fullname !== currUser.displayName) && { displayName: fullname },
         ...(phone !== currUser.phone) && { phone },
         ...(age !== currUser.age) && { age },
+        ...(address !== currUser.address) && { address },
       };
       if (!isEmpty(dirtyProps)) {
         setIsSaving(true);
@@ -96,6 +99,37 @@ const User = () => {
   return (
     <div className={classes.root}>
       {error && <Alert severity="error">{error}</Alert>}
+      <Paper className={clsx(classes.paper, classes.storageAddress)}>
+        <Typography variant="h6" gutterBottom>
+          Your Personal Shipping Address in China
+        </Typography>
+        <Grid container spacing={3}>
+          <Grid item xs={9} sm={9}>
+            <TextField
+              id="storageAddress"
+              name="storageAddress"
+              label="Storage Address in China"
+              fullWidth
+              defaultValue={userStorageAddr}
+              InputProps={{
+                readOnly: true,
+              }}
+            />
+          </Grid>
+          <Grid item xs={3} sm={3}>
+            <CopyToClipboard text={userStorageAddr} onCopy={() => setIsCopied(true)}>
+              <Button
+                variant="contained"
+                className="copy-btn"
+                color="primary"
+                style={isCopied ? { backgroundColor: theme.green } : {}}
+              >
+                {isCopied ? 'Copied!' : 'Copy'}
+              </Button>
+            </CopyToClipboard>
+          </Grid>
+        </Grid>
+      </Paper>
       <Paper className={classes.paper}>
         <Typography variant="h6" gutterBottom>
           User Information
@@ -165,6 +199,18 @@ const User = () => {
               inputRef={phoneRef}
             />
           </Grid>
+          <Grid item xs={12}>
+            <TextField
+              id="address"
+              name="address"
+              label="Your Shipping Address"
+              fullWidth
+              defaultValue={currUser.address}
+              disabled={isViewing || isSaving}
+              variant={isViewing ? 'filled' : 'outlined'}
+              inputRef={addressRef}
+            />
+          </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
               id="age"
@@ -186,7 +232,7 @@ const User = () => {
               label="Balance"
               fullWidth
               autoComplete="shipping postal-code"
-              defaultValue={currUser.wallet?.balanceCent / 100}
+              defaultValue={(currUser.wallet?.balanceCent / 100) || 0}
               disabled
               variant="filled"
             />
@@ -196,19 +242,19 @@ const User = () => {
           <Grid className={classes.btnGroup} item xs={12}>
             <Button
               variant="contained"
+              color="secondary"
+              onClick={handleLogout}
+            >
+              Logout
+            </Button>
+            <Button
+              variant="contained"
               color="primary"
               onClick={handleOnClick}
               disabled={isSaving}
             >
               {isViewing ? 'Edit' : 'Save'}
               { isSaving && <CircularProgress className={classes.loading} size={20} color="secondary" />}
-            </Button>
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={handleLogout}
-            >
-              Logout
             </Button>
           </Grid>
         </Grid>

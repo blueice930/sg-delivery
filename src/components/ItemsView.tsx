@@ -8,43 +8,54 @@ import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 
 import { useItems } from 'src/contexts/ItemContext';
-import AlertMsg, { Severity } from 'src/components/AlertMsg';
 import { Item } from 'src/types/item';
-import { Typography } from '@material-ui/core';
+import {
+  makeStyles, Paper, Theme, Typography,
+} from '@material-ui/core';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-const Container = styled.div`
-`;
+const useStyles = makeStyles((muiTheme: Theme) => ({
+  root: {
+    margin: muiTheme.spacing(1),
+    padding: muiTheme.spacing(2),
+  },
+}));
 
 const DEFAULT_PAGE_SIZE: number = 10;
 
 const ItemsView = () => {
   const {
-    items, alert, severity, totalCount, getItemWithPagination,
+    items, totalCount, getItemWithPagination, setSelectedItemUids,
   } = useItems();
-  const [currPage, setCurrPage] = useState(0);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
 
+  const classes = useStyles();
+
   const rows = items.map(({
+    uid,
     packageId,
     deliveryCompany,
     status,
     itemName,
     itemQuantity,
+    deliveryPrice,
     createdAt,
   }: Item, index: number) => ({
-    id: index,
+    uid,
+    id: index + 1,
     packageId,
     deliveryCompany,
     status,
     itemName,
     itemQuantity,
+    deliveryPrice,
     createdAt,
   }));
 
   const columns: GridColDef[] = [
+    { field: 'uid', headerName: ' ', hide: true },
     { field: 'id', headerName: ' ', width: 20 },
     {
       field: 'packageId',
@@ -57,7 +68,7 @@ const ItemsView = () => {
       field: 'deliveryCompany',
       headerName: 'Delivery Company',
       description: 'Delivery Company',
-      minWidth: 200,
+      minWidth: 140,
       flex: 0.8,
     },
     {
@@ -86,6 +97,13 @@ const ItemsView = () => {
       minWidth: 130,
     },
     {
+      field: 'deliveryPrice',
+      headerName: 'Price',
+      description: 'Item Delivery Price',
+      type: 'number',
+      minWidth: 140,
+    },
+    {
       field: 'createdAt',
       headerName: 'Created At',
       description: 'Date Create',
@@ -106,22 +124,19 @@ const ItemsView = () => {
   }, [items]);
 
   const handlePageOnChange = useCallback(async (page: number) => {
-    const tempCurrPage = currPage;
-    setCurrPage(page);
     if (page * pageSize >= items.length) {
       await handleNextPage();
     }
     // TODO
     // if (page < tempCurrPage) {}
   },
-  [currPage, items, pageSize]);
+  [items, pageSize]);
 
   return (
-    <Container>
+    <Paper className={classes.root}>
       <Typography variant="h4" color="textPrimary" align="center">
         Active Items
       </Typography>
-      <AlertMsg alertMsg={alert} severity={severity} />
       <DataGrid
         autoHeight
         sortingMode="server"
@@ -134,8 +149,11 @@ const ItemsView = () => {
         checkboxSelection
         disableColumnFilter
         onPageChange={handlePageOnChange}
+        onSelectionModelChange={(ids) => {
+          setSelectedItemUids(ids.map((id: any) => (items[id - 1]?.uid) || []));
+        }}
       />
-    </Container>
+    </Paper>
   );
 };
 

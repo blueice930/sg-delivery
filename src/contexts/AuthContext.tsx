@@ -12,19 +12,18 @@ export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children } : any) => {
   const [currUser, setCurrUser] = useState<User>();
+  const [storageAddr, setStorageAddr] = useState('');
   const [loading, setLoading] = useState(true);
 
   const fetchUserInfo = async (email: string) => {
     const { data } = await fetchUser({ email });
-    const { success, data: userData } = data;
+    const { success, data: { user: userData, storageAddress } } = data;
 
-    if (!success) {
-      // TODO
-    }
     const user: User = {
       ...userData,
     };
     setCurrUser(user);
+    setStorageAddr(storageAddress);
   };
 
   const signup = async (email: string, pw: string, fname: string, lname: string) => {
@@ -87,6 +86,7 @@ export const AuthProvider = ({ children } : any) => {
 
   const value = {
     currUser,
+    storageAddr,
     signup,
     login,
     logout,

@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import { isEmpty } from 'lodash';
+import { isEmpty, capitalize } from 'lodash';
 import { Alert, AlertTitle } from '@material-ui/lab';
 import { Collapse } from '@material-ui/core';
 
@@ -19,27 +19,29 @@ export enum Severity {
   SUCCESS = 'success',
 }
 const AlertMsg: FC<AlertMsgProps> = ({ alertMsg, severity } : AlertMsgProps) => {
-  const [open, setOpen] = useState(true);
+  const [msg, setMsg] = useState<any>({});
 
   useEffect(() => {
-    if (isEmpty(alertMsg)) {
-      setOpen(true);
-    }
+    setMsg(alertMsg);
     return () => {};
-  }, [alertMsg, open]);
+  }, [alertMsg]);
 
   return (
-    <Collapse in={!isEmpty(alertMsg) && open}>
-      <Alert
-        severity={severity}
-        onClose={() => setOpen(false)}
-        closeText="Close"
-      >
-        <AlertTitle>{alertMsg.title}</AlertTitle>
-        {alertMsg?.details}
-        {alertMsg?.message && alertMsg?.details && (' - ')}
-        <strong>{alertMsg?.message}</strong>
-      </Alert>
+    <Collapse in={!isEmpty(msg)}>
+      {!isEmpty(msg) && (
+        <Alert
+          severity={severity}
+          onClose={() => {
+            setMsg({});
+          }}
+          closeText="Close"
+        >
+          <AlertTitle>{capitalize(msg.title)}</AlertTitle>
+          {msg?.details}
+          {msg?.message && msg?.details && (' - ')}
+          <strong>{msg?.message}</strong>
+        </Alert>
+      )}
     </Collapse>
   );
 };

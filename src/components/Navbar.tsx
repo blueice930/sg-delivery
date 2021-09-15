@@ -92,9 +92,13 @@ const Navbar = () => {
           <StyledIcon icon={faPhoneAlt} />
           <li>Contact Us</li>
         </StyledLink>
-        <StyledLink to={Routes.order}>
+        <StyledLink to={Routes.item}>
           <StyledIcon icon={faBox} />
           <li>My Packages</li>
+        </StyledLink>
+        <StyledLink to={Routes.order}>
+          <StyledIcon icon={faBox} />
+          <li>My Delivery</li>
         </StyledLink>
         <StyledLink to={Routes.user}>
           <StyledIcon icon={faUser} />

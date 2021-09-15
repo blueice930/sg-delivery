@@ -39,6 +39,7 @@ export const getItemsFn = async (data: any, context: CallableContext) => {
         status: data?.status,
         itemName: data?.itemName,
         itemQuantity: data?.itemQuantity,
+        itemPrice: data?.itemPrice,
         createdAt: data?.createdAt,
         arrivedAt: data?.arrivedAt,
         combinedAt: data?.combinedAt,
@@ -46,10 +47,11 @@ export const getItemsFn = async (data: any, context: CallableContext) => {
         weight: data?.weight,
         size: data?.size,
         comments: data?.comments,
+        deliveryPrice: data?.deliveryPrice,
       };
       items.push(item);
     });
-  } catch (e) {
+  } catch (e: any) {
     throw new https.HttpsError('unknown',
         'Error getting documents', e?.message);
   }

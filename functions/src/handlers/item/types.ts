@@ -6,6 +6,7 @@ export interface Item {
   status: ItemStatus,
   itemName: string,
   itemQuantity: number,
+  itemPrice: number,
   createdAt: number,
   arrivedAt?: number,
   combinedAt?: number,
@@ -13,6 +14,7 @@ export interface Item {
   weight?: number,
   size?: number,
   comments?: string,
+  deliveryPrice?: number,
 }
 
 export enum ItemStatus {
