@@ -145,7 +145,7 @@ const ItemsView = () => {
       <DataGrid
         autoHeight
         sortingMode="server"
-        rowCount={totalCount}
+        rowCount={useFilter ? activeItems?.count : totalCount}
         rows={rows}
         columns={columns}
         pageSize={pageSize}

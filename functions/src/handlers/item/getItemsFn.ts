@@ -1,7 +1,7 @@
 import {firestore} from 'firebase-admin';
 import {CallableContext} from 'firebase-functions/v1/https';
 import {https} from '../../helpers/initFirebaseFunctions';
-import { FunctionResponse } from '../../helpers/types';
+import {FunctionResponse} from '../../helpers/types';
 import {Item, LiveItemStatus} from './types';
 
 
@@ -52,8 +52,10 @@ export const getActiveItemsFn = async (data: any, context: CallableContext) => {
       items.push(item);
     });
   } catch (e) {
-    throw new https.HttpsError('unknown',
-        'Error getting documents', e?.message);
+    if (e instanceof Error) {
+      throw new https.HttpsError('unknown',
+          'Error getting documents', e?.message);
+    }
   }
   const response: FunctionResponse = {
     success: true,
