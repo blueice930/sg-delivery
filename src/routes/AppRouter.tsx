@@ -1,16 +1,20 @@
 import React, { FC } from 'react';
 import {
-  BrowserRouter as Router, Redirect, Route, Switch,
+  Redirect, Route, Switch, Link,
 } from 'react-router-dom';
 
 import { useAuth } from 'src/contexts/AuthContext';
 import AdminPage from 'src/pages/Admin';
-import Order from 'src/pages/private/Order';
+import { useOrders } from 'src/contexts/OrderContext';
+import { useItems } from 'src/contexts/ItemContext';
+import ItemDetailView from 'src/pages/ItemDetailView';
+import OrderDetailView from 'src/pages/OrderDetailView';
+import Home from 'src/pages/Home';
+import About from 'src/pages/About';
+import User from 'src/pages/private/User';
+import Items from 'src/pages/private/Items';
+import Orders from 'src/pages/private/Orders';
 import Routes from './Routes';
-import Home from '../pages/Home';
-import About from '../pages/About';
-import User from '../pages/private/User';
-import Item from '../pages/private/Item';
 import Navbar from '../components/Navbar';
 import '../App.css';
 import Shop from '../pages/Shop';
@@ -21,57 +25,67 @@ import AdminRoute from './AdminRoute';
 
 const AppRouter: FC = () => {
   const { currUser } = useAuth();
+  const { orders } = useOrders();
+  const { items } = useItems();
   return (
     <div className="App">
-      <Router>
-        <Navbar />
-        <Switch>
-          <Route
-            exact
-            path={Routes.root}
-            component={Home}
-          />
-          <Route
-            exact
-            path={Routes.shop}
-            component={Shop}
-          />
-          <Route
-            exact
-            path={Routes.about}
-            component={About}
-          />
-          <Route
-            exact
-            path={Routes.login}
-            render={() => (currUser
-              ? (
-                <Redirect to={{ pathname: Routes.user }} />
-              ) : <Login />)}
-          />
-          <PrivateRoute
-            exact
-            path={Routes.user}
-            component={User}
-          />
-          <PrivateRoute
-            exact
-            path={Routes.item}
-            component={Item}
-          />
-          <PrivateRoute
-            exact
-            path={Routes.order}
-            component={Order}
-          />
-          <AdminRoute
-            exact
-            path={Routes.admin}
-            component={AdminPage}
-          />
-          <Route component={PageNotFound} />
-        </Switch>
-      </Router>
+      <Navbar />
+      <Switch>
+        <Route
+          exact
+          path={Routes.root}
+          component={Home}
+        />
+        <Route
+          exact
+          path={Routes.shop}
+          component={Shop}
+        />
+        <Route
+          exact
+          path={Routes.about}
+          component={About}
+        />
+        <Route
+          exact
+          path={Routes.login}
+          render={() => (currUser
+            ? (
+              <Redirect to={{ pathname: Routes.user }} />
+            ) : <Login />)}
+        />
+        <PrivateRoute
+          exact
+          path={Routes.user}
+          component={User}
+        />
+        <PrivateRoute
+          exact
+          path={Routes.items}
+          component={Items}
+        />
+        <PrivateRoute
+          exact
+          path={Routes.orders}
+          component={Orders}
+        />
+        <AdminRoute
+          exact
+          path={Routes.admin}
+          component={AdminPage}
+        />
+        <PrivateRoute
+          exact
+          path={Routes.itemDetail}
+          component={ItemDetailView}
+        />
+        <PrivateRoute
+          exact
+          path={Routes.orderDetail}
+          component={OrderDetailView}
+        />
+        <Route component={PageNotFound} />
+      </Switch>
     </div>
   );
 };

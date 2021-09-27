@@ -16,7 +16,6 @@ export const createOrderFn = async (data:any, context: CallableContext) => {
   const uid = uuidv4();
   const itemUids = data?.itemUids;
   const createdAt = firestore.Timestamp.now().toMillis();
-  console.log(`data`, data);
 
   if (!itemUids?.length) {
     // Throwing an HttpsError cause empty item uids
@@ -51,7 +50,7 @@ export const createOrderFn = async (data:any, context: CallableContext) => {
     uid,
     userId,
     itemUids,
-    status: OrderStatus.CREATED,
+    status: OrderStatus.UNPAID,
     createdAt,
     updatedAt: createdAt,
   };

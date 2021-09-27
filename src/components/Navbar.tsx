@@ -11,7 +11,7 @@ import { deepOrange } from '@material-ui/core/colors';
 import { useAuth } from 'src/contexts/AuthContext';
 import logo from 'src/assets/logo.svg';
 import Routes from 'src/routes/Routes';
-import { theme } from 'src/theme';
+import { themeColor } from 'src/theme';
 
 const StyledLogoLink = styled(NavLink)`
   display: flex;
@@ -24,7 +24,7 @@ const StyledLogo = styled.img`
 `;
 
 const StyledLink = styled(Link)`
-  color: ${theme.white};
+  color: ${themeColor.white};
   text-decoration: none;
   display: flex;
   align-items: center;
@@ -38,8 +38,8 @@ const StyledNavbar = styled.div`
   display: flex;
   justify-content: space-around;
   min-height: 10vh;
-  background-color: ${theme.dark};
-  color: ${theme.white};
+  background-color: ${themeColor.dark};
+  color: ${themeColor.white};
   ul {
     list-style: none;
     width: 50%;
@@ -51,7 +51,7 @@ const StyledNavbar = styled.div`
 
 const StyledLogoTxt = styled.div`
   text-decoration: none;
-  color: ${theme.atomBlue};
+  color: ${themeColor.atomBlue};
   font-size: 18px;
   border: 1px solid currentColor;
   box-shadow: 0 0 5px currentColor;
@@ -92,13 +92,13 @@ const Navbar = () => {
           <StyledIcon icon={faPhoneAlt} />
           <li>Contact Us</li>
         </StyledLink>
-        <StyledLink to={Routes.item}>
+        <StyledLink to={Routes.items}>
           <StyledIcon icon={faBox} />
           <li>My Packages</li>
         </StyledLink>
-        <StyledLink to={Routes.order}>
+        <StyledLink to={Routes.orders}>
           <StyledIcon icon={faBox} />
-          <li>My Delivery</li>
+          <li>My Orders</li>
         </StyledLink>
         <StyledLink to={Routes.user}>
           <StyledIcon icon={faUser} />

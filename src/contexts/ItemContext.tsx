@@ -103,6 +103,7 @@ export const ItemsProvider = ({ children } : any) => {
   const value = {
     items,
     createdItems,
+    loading,
     activeItems,
     inWarehouseItems,
     alert,
@@ -116,7 +117,7 @@ export const ItemsProvider = ({ children } : any) => {
 
   return (
     <ItemContext.Provider value={value}>
-      {loading ? <Loading /> : children}
+      {children}
     </ItemContext.Provider>
   );
 };

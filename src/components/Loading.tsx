@@ -1,6 +1,6 @@
 import { CircularProgress } from '@material-ui/core';
 import React from 'react';
-import theme from 'src/theme';
+import { themeColor } from 'src/theme';
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -12,7 +12,7 @@ const Container = styled.div`
 
   .loading {
     font-size: 30px;
-    color: ${theme.dark};
+    color: ${themeColor.dark};
     margin: 15px;
   }
 `;

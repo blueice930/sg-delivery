@@ -30,6 +30,8 @@ const createItem = functions.httpsCallable('item-createItem');
 const updateItem = functions.httpsCallable('item-updateItem');
 const getActiveItems = functions.httpsCallable('item-getActiveItems');
 
+const updateArrivedItem = functions.httpsCallable('admin-updateArrivedItem');
+
 export {
   registerUser,
   updateUser,
@@ -40,6 +42,7 @@ export {
   updateItem,
   getActiveItems,
   fetchUser,
+  updateArrivedItem,
 };
 
 export default app;

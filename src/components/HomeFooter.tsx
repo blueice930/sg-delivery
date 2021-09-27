@@ -1,11 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
-import { theme } from '../theme';
+import { themeColor } from '../theme';
 
 const StyledFooter = styled.div`
-  background-color: ${theme.dark};
+  background-color: ${themeColor.dark};
   padding: 40px 20px;
-  color: ${theme.white};
+  color: ${themeColor.white};
 `;
 
 const HomeFooter = () => (

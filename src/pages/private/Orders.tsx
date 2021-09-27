@@ -1,16 +1,14 @@
 import React from 'react';
+import OrdersTableView from 'src/components/OrdersTableView';
 import { OrdersProvider } from 'src/contexts/OrderContext';
 
-const Order = () => {
+const Orders = () => {
   const abc = 123;
   return (
     <OrdersProvider>
-      <div>
-        Order page
-        {abc}
-      </div>
+      <OrdersTableView />
     </OrdersProvider>
   );
 };
 
-export default Order;
+export default Orders;

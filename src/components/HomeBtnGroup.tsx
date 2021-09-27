@@ -1,9 +1,9 @@
 import React, { FC } from 'react';
 import styled from 'styled-components';
-import { theme } from '../theme';
+import { themeColor } from '../theme';
 
 const StyledContainer = styled.div`
-  color: ${theme.white};
+  color: ${themeColor.white};
   padding: 20px;
   margin: 5px;
   width: 20vw;
@@ -17,7 +17,7 @@ const StyledContainer = styled.div`
 
   :hover {
     cursor: pointer;
-    background-color: ${theme.darkOrange};
+    background-color: ${themeColor.darkOrange};
     border: 1px solid #ff9975;
   }
 `;
@@ -27,7 +27,7 @@ const StyledButton = styled.div`
   padding: 5px;
   border: 1px solid currentColor;
   border-radius: 15px;
-  background-color: ${theme.lightOrange};
+  background-color: ${themeColor.lightOrange};
 `;
 
 export interface HomeBtnGroupProps {

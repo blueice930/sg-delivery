@@ -1,5 +1,5 @@
 import initFirebase from '../../helpers/initFirebase';
-import {getActiveItemsFn} from './getItemsFn';
+import {getActiveItemsFn} from './getActiveItemsFn';
 import {createItemFn} from './createItemFn';
 import {deleteItemFn} from './deleteItemFn';
 import {updateItemFn} from './updateItemFn';

@@ -2,7 +2,7 @@ import {firestore} from 'firebase-admin';
 import {CallableContext} from 'firebase-functions/v1/https';
 import {https} from '../../helpers/initFirebaseFunctions';
 import {FunctionResponse} from '../../helpers/types';
-import {Item, LiveItemStatus} from './types';
+import {Item, ActiveItemStatus} from './types';
 
 
 export const getActiveItemsFn = async (data: any, context: CallableContext) => {
@@ -24,7 +24,7 @@ export const getActiveItemsFn = async (data: any, context: CallableContext) => {
     0;
     const itemsSnapshot = await itemsRef
         .where('userId', '==', userId)
-        .where('status', 'in', LiveItemStatus)
+        .where('status', 'in', ActiveItemStatus)
         .orderBy('createdAt', 'asc')
         .startAfter(cursorRef)
         .limit(80)

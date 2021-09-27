@@ -1,4 +1,4 @@
-export const theme = {
+export const themeColor = {
   white: '#fff',
   dark: '#5c5c5c',
   atomBlue: '#61DAFB',
@@ -8,4 +8,6 @@ export const theme = {
   green: '#2ab147',
 };
 
-export default theme;
+export const DEFAULT_PAGE_SIZE: number = 10;
+
+export default themeColor;

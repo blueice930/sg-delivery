@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { theme } from 'src/theme';
+import { themeColor } from 'src/theme';
 import HomeFooter from 'src/components/HomeFooter';
 import HomeBtnGroup from 'src/components/HomeBtnGroup';
 import Banner1 from 'src/assets/home-banner.jpeg';
@@ -18,7 +18,7 @@ const Container = styled.div`
 
 const StyledContainer = styled.div`
   padding: 20px;
-  background-color: ${theme.orange};
+  background-color: ${themeColor.orange};
   display: flex;
   justify-content: space-between;
 `;
@@ -32,7 +32,7 @@ const StyledBgContainer = styled.div`
     padding: 20px 0;
 
     .title {
-      color: ${theme.white};
+      color: ${themeColor.white};
       font-size: 30px;
     }
   }

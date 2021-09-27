@@ -2,6 +2,8 @@ import React, { useContext, useState, useEffect } from 'react';
 import { isEmpty } from 'lodash';
 import { User } from 'src/types/user';
 import Loading from 'src/components/Loading';
+import { useLocation } from 'react-router-dom';
+import { isPublicRoute } from 'src/routes/Routes';
 import {
   auth, fetchUser, registerUser, updateUser,
 } from '../firebase';
@@ -14,6 +16,7 @@ export const AuthProvider = ({ children } : any) => {
   const [currUser, setCurrUser] = useState<User>();
   const [storageAddr, setStorageAddr] = useState('');
   const [loading, setLoading] = useState(true);
+  const { pathname } = useLocation();
 
   const fetchUserInfo = async (email: string) => {
     const { data } = await fetchUser({ email });
@@ -81,6 +84,9 @@ export const AuthProvider = ({ children } : any) => {
   );
 
   useEffect(() => {
+    if (isPublicRoute(pathname)) {
+      setLoading(false);
+    }
     // unsubscribe??: const unsubscribe =
     auth.onAuthStateChanged(async (user) => {
       if (user && user.email && isEmpty(currUser)) {

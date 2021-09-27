@@ -15,7 +15,7 @@ const StyledBtnGroup = styled.div`
   align-items: center;
 `;
 
-const Item = () => (
+const Items = () => (
   <ItemsProvider>
     <OrdersProvider>
       <AlertGroup />
@@ -28,4 +28,4 @@ const Item = () => (
   </ItemsProvider>
 );
 
-export default Item;
+export default Items;

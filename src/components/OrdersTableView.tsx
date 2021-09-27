@@ -1,16 +1,19 @@
-import { DataGrid, GridColDef, GridFilterModel } from '@material-ui/data-grid';
 import React, { useCallback, useState } from 'react';
+import {
+  makeStyles, Paper, Theme, Typography, Switch,
+} from '@material-ui/core';
+import { Link, useHistory } from 'react-router-dom';
+import {
+  DataGrid, GridColDef, GridFilterModel,
+} from '@material-ui/data-grid';
 import jstz from 'jstz';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
-import {
-  makeStyles, Paper, Theme, Typography, Switch,
-} from '@material-ui/core';
 
-import { useItems } from 'src/contexts/ItemContext';
-import { Item, ItemStatus } from 'src/types/item';
+import { useOrders } from 'src/contexts/OrderContext';
 import { DEFAULT_PAGE_SIZE } from 'src/theme';
+import { Order, OrderStatus } from 'src/types/order';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -20,7 +23,7 @@ const useStyles = makeStyles((muiTheme: Theme) => ({
     margin: muiTheme.spacing(1),
     padding: muiTheme.spacing(2),
   },
-  row: {
+  switchGroup: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -29,63 +32,53 @@ const useStyles = makeStyles((muiTheme: Theme) => ({
 }));
 
 const emptyFilter: GridFilterModel = { items: [] };
-const readyItemFilter: GridFilterModel = {
+const getReadyItemFilter = (status: OrderStatus): GridFilterModel => ({
   items: [{
-    columnField: 'status', operatorValue: 'equals', value: ItemStatus.ARRIVED_WAREHOUSE,
+    columnField: 'status', operatorValue: 'equals', value: status,
   }],
-};
+});
 
-const ItemsView = () => {
-  const {
-    activeItems, totalCount, getItemWithPagination, setSelectedItemUids, loading,
-  } = useItems();
+const OrdersTableView = () => {
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
   const [useFilter, setUseFilter] = useState(false);
 
   const classes = useStyles();
+  const history = useHistory();
+  const { orders, getOrderWithPagination, loading } = useOrders();
 
-  const rows = activeItems.map(({
+  const rows = orders.map(({
     uid,
-    packageId,
-    deliveryCompany,
+    itemUids,
     status,
-    itemName,
-    deliveryPrice,
     createdAt,
-  }: Item, index: number) => ({
+    updatedAt,
+  }: Order, index: number) => ({
     uid,
     id: index + 1,
-    packageId,
-    deliveryCompany,
+    itemsCount: itemUids?.length || 0,
     status,
-    itemName,
-    deliveryPrice,
     createdAt,
+    updatedAt,
   }));
 
   const columns: GridColDef[] = [
-    { field: 'uid', headerName: ' ', hide: true },
     { field: 'id', headerName: ' ', width: 20 },
     {
-      field: 'packageId',
-      headerName: 'Package Number',
-      description: 'Package Number',
+      field: 'uid',
+      headerName: 'Order ID (View Details)',
       minWidth: 200,
+      flex: 2,
+      renderCell: (params: any) => (
+        // eslint-disable-next-line react/destructuring-assignment
+        <Link to={`order/${params?.value}`}>{params?.value}</Link>
+      ),
+    },
+    {
+      field: 'itemsCount',
+      headerName: 'Items Count',
+      description: 'How many packages included in this order',
+      minWidth: 110,
       flex: 1,
-    },
-    {
-      field: 'deliveryCompany',
-      headerName: 'Delivery Company',
-      description: 'Delivery Company',
-      minWidth: 140,
-      flex: 0.8,
-    },
-    {
-      field: 'itemName',
-      headerName: 'Name',
-      description: 'Item Name',
-      minWidth: 120,
-      flex: 0.8,
     },
     {
       field: 'status',
@@ -96,14 +89,21 @@ const ItemsView = () => {
         const valueFormatted = status?.charAt(0) + status.slice(1).toLowerCase();
         return valueFormatted;
       },
-      minWidth: 150,
+      minWidth: 120,
+      flex: 1,
     },
     {
-      field: 'deliveryPrice',
-      headerName: 'Price',
-      description: 'Item Delivery Price',
-      type: 'number',
-      minWidth: 140,
+      field: 'updatedAt',
+      headerName: 'Updated At',
+      description: 'Date Update',
+      valueFormatter: (param) => {
+        const millis = param.value;
+        const tz = jstz.determine();
+        const date = dayjs(Number(millis)).tz(tz.name()).toString();
+        return date;
+      },
+      minWidth: 250,
+      flex: 1,
     },
     {
       field: 'createdAt',
@@ -121,46 +121,43 @@ const ItemsView = () => {
   ];
 
   const handleNextPage = useCallback(async () => {
-    const cursor = activeItems[activeItems.length - 1]?.uid || '';
-    await getItemWithPagination(cursor);
-  }, [activeItems]);
+    const cursor = orders[orders.length - 1]?.uid || '';
+    await getOrderWithPagination(cursor);
+  }, [orders]);
 
   const handlePageOnChange = useCallback(async (page: number) => {
     // page start with 0.
-    if ((page + 1) * pageSize >= activeItems.length) {
+    if ((page + 1) * pageSize >= orders.length) {
       await handleNextPage();
     }
   },
-  [activeItems, pageSize]);
+  [orders, pageSize]);
 
   return (
     <Paper className={classes.root}>
       <Typography variant="h4" color="textPrimary" align="center">
-        Active Packages
+        All Orders
       </Typography>
-      <div className={classes.row}>
+      <div className={classes.switchGroup}>
         <Switch checked={useFilter} onChange={() => { setUseFilter(!useFilter); }} color="secondary" />
-        <div>Ready Packages</div>
+        <div>Unpaid Orders</div>
       </div>
       <DataGrid
         autoHeight
-        sortingMode="server"
         loading={loading}
-        rowCount={useFilter ? activeItems?.count : totalCount}
+        hideFooterSelectedRowCount
+        // todooooo
+        rowCount={useFilter ? orders?.count : orders?.count}
         rows={rows}
         columns={columns}
         pageSize={pageSize}
         onPageSizeChange={(pSize: number) => { setPageSize(pSize); }}
         rowsPerPageOptions={[DEFAULT_PAGE_SIZE, 25, 50]}
-        checkboxSelection
         onPageChange={handlePageOnChange}
-        onSelectionModelChange={(ids) => {
-          setSelectedItemUids(ids.map((id: any) => (activeItems[id - 1]?.uid) || []));
-        }}
-        filterModel={useFilter ? readyItemFilter : emptyFilter}
+        filterModel={useFilter ? getReadyItemFilter(OrderStatus.UNPAID) : emptyFilter}
       />
     </Paper>
   );
 };
 
-export default ItemsView;
+export default OrdersTableView;

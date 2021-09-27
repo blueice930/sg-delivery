@@ -4,8 +4,9 @@ import React, {
 import { Severity } from 'src/components/AlertMsg';
 import Loading from 'src/components/Loading';
 import { Order } from 'src/types/order';
-import { createOrder as createOrderAPICall } from 'src/firebase';
+import { createOrder as createOrderAPICall, getOrders } from 'src/firebase';
 import { Item, ItemStatus } from 'src/types/item';
+import { useHistory } from 'react-router-dom';
 import { useItems } from './ItemContext';
 
 const OrderContext = createContext<any>({});
@@ -15,15 +16,21 @@ export const useOrders = () => useContext(OrderContext);
 export const OrdersProvider = ({ children } : any) => {
   const [severity, setSeverity] = useState<Severity>(Severity.ERROR);
   const [alert, setAlert] = useState<any>({});
+  const [loading, setLoading] = useState(true);
   const [totalCount, setTotalCount] = useState(0);
   const [orders, setOrders] = useState<Order[]>([]);
   const { activeItems, selectedItemUids } = useItems();
+  const history = useHistory();
 
-  const getOrderWithPagination = useCallback(async () => {
-
+  const getOrderWithPagination = useCallback(async (cursorId: string) => {
+    const { data } = await getOrders({ cursorId });
+    const { data: { items: newBatch } } = data;
+    const allOrders = [...orders, ...newBatch];
+    setOrders(allOrders);
   }, [orders]);
 
   const createOrder = useCallback(async () => {
+    setLoading(true);
     if (!selectedItemUids.length) {
       setSeverity(Severity.ERROR);
       setAlert({
@@ -47,19 +54,23 @@ export const OrdersProvider = ({ children } : any) => {
         message: 'Invalid items',
         details: 'Please select items that have arrived warehouse.',
       });
+      setLoading(false);
       return;
     }
     try {
-      const { data } = await createOrderAPICall({ itemUids: selectedItemUids });
+      const { data: { data, success } } = await createOrderAPICall({ itemUids: selectedItemUids });
       // TODO: if not success?
-      if (true) {
+      if (success) {
+        setOrders([...orders, data]);
         setSeverity(Severity.SUCCESS);
         setAlert({
           title: 'Success',
           message: 'Order Created successfully!',
           details: '🎉',
         });
+        history.push(`order/${data?.uid}`);
       }
+      return;
     } catch (e: any) {
       setSeverity(Severity.ERROR);
       setAlert({
@@ -69,14 +80,42 @@ export const OrdersProvider = ({ children } : any) => {
       });
       console.error(e);
     }
+    setLoading(false);
   }, [selectedItemUids, activeItems]);
+
+  useEffect(() => {
+    const getOrdersFnCall = async () => {
+      try {
+        const { data } = await getOrders();
+        if (!data?.success) {
+          setSeverity(Severity.ERROR);
+          setAlert({ title: 'fetch-failed', message: 'Something wrong with the network', details: 'Get orders failed' });
+        }
+        const { data: { orders: ordersData, totalCount: totalCountData } } = data;
+        setOrders(ordersData);
+        setTotalCount(totalCountData);
+        setLoading(false);
+      } catch (e: any) {
+        setSeverity(Severity.ERROR);
+        setAlert({
+          title: e?.code,
+          message: e?.message,
+          details: e?.details,
+        });
+        setLoading(false);
+      }
+    };
+    getOrdersFnCall();
+  }, []);
 
   const value = {
     orders,
     alert,
+    loading,
     severity,
     totalCount,
     createOrder,
+    getOrderWithPagination,
   };
 
   return (

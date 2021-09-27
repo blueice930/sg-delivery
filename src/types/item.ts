@@ -25,6 +25,7 @@ export enum ItemStatus {
   RECEIVED = 'RECEIVED',
   EXPIRED = 'EXPIRED',
   UNKNOWN = 'UNKNOWN',
+  DELETED = 'DELETED',
 }
 
 export const LiveItemStatus = [

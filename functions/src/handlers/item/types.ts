@@ -25,9 +25,10 @@ export enum ItemStatus {
   RECEIVED='RECEIVED',
   EXPIRED='EXPIRED',
   UNKNOWN='UNKNOWN',
+  DELETED='DELETED',
 }
 
-export const LiveItemStatus = [
+export const ActiveItemStatus = [
   ItemStatus.CREATED,
   ItemStatus.ARRIVED_WAREHOUSE,
 ];

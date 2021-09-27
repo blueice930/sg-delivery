@@ -11,7 +11,7 @@ import {
   CircularProgress, Grid, makeStyles, Paper,
   TextField, Theme, Typography,
 } from '@material-ui/core';
-import theme from 'src/theme';
+import { themeColor } from 'src/theme';
 
 const useStyles = makeStyles((muiTheme: Theme) => ({
   root: {
@@ -122,7 +122,7 @@ const User = () => {
                 variant="contained"
                 className="copy-btn"
                 color="primary"
-                style={isCopied ? { backgroundColor: theme.green } : {}}
+                style={isCopied ? { backgroundColor: themeColor.green } : {}}
               >
                 {isCopied ? 'Copied!' : 'Copy'}
               </Button>

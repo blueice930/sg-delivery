@@ -1,15 +1,18 @@
 import React from 'react';
 import { Button } from '@material-ui/core';
+import { updateArrivedItem } from 'src/firebase';
 
 const Shop = () => {
-  const abc = 123;
+  const test = async () => {
+    // const res = await updateArrivedItem({ packageId: 'SDUF1238497' });
+  };
   return (
     <div>
       Shop page
-      {abc}
       <Button
         variant="contained"
         color="primary"
+        onClick={test}
       >
         test
       </Button>

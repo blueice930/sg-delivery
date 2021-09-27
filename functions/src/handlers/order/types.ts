@@ -8,7 +8,7 @@ export interface Order {
 }
 
 export enum OrderStatus {
-  CREATED='CREATED',
+  UNPAID='UNPAID',
   PAID='PAID',
   EXPIRED='EXPIRED',
   SHIPPING='SHIPPING',
