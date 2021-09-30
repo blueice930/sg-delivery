@@ -15,7 +15,8 @@ const app = firebase.initializeApp(config);
 const functions = firebase.app().functions('asia-southeast1');
 
 // local test purpose
-functions.useEmulator('localhost', 5001);
+// functions.useEmulator('localhost', 5001);
+
 export const auth = app.auth();
 
 const registerUser = functions.httpsCallable('user-registerUser');
