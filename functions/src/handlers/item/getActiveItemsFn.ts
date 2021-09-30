@@ -4,6 +4,22 @@ import {https} from '../../helpers/initFirebaseFunctions';
 import {FunctionResponse} from '../../helpers/types';
 import {Item, ActiveItemStatus} from './types';
 
+export enum FetchType {
+  ALL='ALL',
+  ACTIVE='ACTIVE',
+}
+
+// todo fetch items by status. issue: Cannot get total count...
+const getQuery = (
+    itemsRef: firestore.CollectionReference, fetchType: string
+) => {
+  switch (fetchType) {
+    case 'ACTIVE':
+      return itemsRef.where('status', 'in', ActiveItemStatus);
+    default:
+      return itemsRef;
+  }
+};
 
 export const getActiveItemsFn = async (data: any, context: CallableContext) => {
   if (!context.auth) {
@@ -18,16 +34,18 @@ export const getActiveItemsFn = async (data: any, context: CallableContext) => {
   const userRef = db.collection('users').doc(userId);
   const totalCount = (await userRef.get()).data()?.itemUids?.length || 0;
   const cursor = data?.cursorId;
+  const fetchType = data?.fetchType;
   try {
     const cursorRef = cursor ?
     (await itemsRef.where('uid', '==', cursor).get()).docs[0] :
     0;
-    const itemsSnapshot = await itemsRef
+
+    const query = getQuery(itemsRef, fetchType);
+    const itemsSnapshot = await query
         .where('userId', '==', userId)
-        .where('status', 'in', ActiveItemStatus)
         .orderBy('createdAt', 'asc')
         .startAfter(cursorRef)
-        .limit(80)
+        .limit(100)
         .get();
     itemsSnapshot.forEach((itemData) => {
       const data = itemData.data();

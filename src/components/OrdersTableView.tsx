@@ -43,13 +43,15 @@ const OrdersTableView = () => {
   const [useFilter, setUseFilter] = useState(false);
 
   const classes = useStyles();
-  const history = useHistory();
-  const { orders, getOrderWithPagination, loading } = useOrders();
+  const {
+    orders, getOrderWithPagination, loading, totalCount,
+  } = useOrders();
 
   const rows = orders.map(({
     uid,
     itemUids,
     status,
+    price,
     createdAt,
     updatedAt,
   }: Order, index: number) => ({
@@ -57,6 +59,7 @@ const OrdersTableView = () => {
     id: index + 1,
     itemsCount: itemUids?.length || 0,
     status,
+    price,
     createdAt,
     updatedAt,
   }));
@@ -72,6 +75,25 @@ const OrdersTableView = () => {
         // eslint-disable-next-line react/destructuring-assignment
         <Link to={`order/${params?.value}`}>{params?.value}</Link>
       ),
+    },
+    {
+      field: 'createdAt',
+      headerName: 'Created At',
+      description: 'Date Create',
+      valueFormatter: (param) => {
+        const millis = param.value;
+        const tz = jstz.determine();
+        const date = dayjs(Number(millis)).tz(tz.name()).toString();
+        return date;
+      },
+      minWidth: 200,
+      flex: 2,
+    },
+    {
+      field: 'price',
+      headerName: 'Price',
+      minWidth: 80,
+      flex: 1,
     },
     {
       field: 'itemsCount',
@@ -92,32 +114,6 @@ const OrdersTableView = () => {
       minWidth: 120,
       flex: 1,
     },
-    {
-      field: 'updatedAt',
-      headerName: 'Updated At',
-      description: 'Date Update',
-      valueFormatter: (param) => {
-        const millis = param.value;
-        const tz = jstz.determine();
-        const date = dayjs(Number(millis)).tz(tz.name()).toString();
-        return date;
-      },
-      minWidth: 250,
-      flex: 1,
-    },
-    {
-      field: 'createdAt',
-      headerName: 'Created At',
-      description: 'Date Create',
-      valueFormatter: (param) => {
-        const millis = param.value;
-        const tz = jstz.determine();
-        const date = dayjs(Number(millis)).tz(tz.name()).toString();
-        return date;
-      },
-      minWidth: 250,
-      flex: 1,
-    },
   ];
 
   const handleNextPage = useCallback(async () => {
@@ -127,11 +123,12 @@ const OrdersTableView = () => {
 
   const handlePageOnChange = useCallback(async (page: number) => {
     // page start with 0.
-    if ((page + 1) * pageSize >= orders.length) {
+    const count = (page + 1) * pageSize;
+    if (count >= orders.length && orders.length < totalCount) {
       await handleNextPage();
     }
   },
-  [orders, pageSize]);
+  [orders, pageSize, totalCount]);
 
   return (
     <Paper className={classes.root}>
@@ -147,7 +144,7 @@ const OrdersTableView = () => {
         loading={loading}
         hideFooterSelectedRowCount
         // todooooo
-        rowCount={useFilter ? orders?.count : orders?.count}
+        rowCount={useFilter ? orders?.count : totalCount}
         rows={rows}
         columns={columns}
         pageSize={pageSize}

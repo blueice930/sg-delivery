@@ -4,9 +4,13 @@ import React, {
 import { Severity } from 'src/components/AlertMsg';
 import Loading from 'src/components/Loading';
 import { Order } from 'src/types/order';
-import { createOrder as createOrderAPICall, getOrders } from 'src/firebase';
+import {
+  createOrder as createOrderAPICall, getOrders,
+} from 'src/firebase';
 import { Item, ItemStatus } from 'src/types/item';
 import { useHistory } from 'react-router-dom';
+import { isEmpty } from 'lodash';
+
 import { useItems } from './ItemContext';
 
 const OrderContext = createContext<any>({});
@@ -24,7 +28,7 @@ export const OrdersProvider = ({ children } : any) => {
 
   const getOrderWithPagination = useCallback(async (cursorId: string) => {
     const { data } = await getOrders({ cursorId });
-    const { data: { items: newBatch } } = data;
+    const { data: { orders: newBatch } } = data;
     const allOrders = [...orders, ...newBatch];
     setOrders(allOrders);
   }, [orders]);

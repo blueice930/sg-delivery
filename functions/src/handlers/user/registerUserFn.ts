@@ -24,7 +24,7 @@ export const registerUserFn = async (data:any, context: CallableContext) => {
     lname,
     email,
     address,
-    wallet: {balanceCent: 0},
+    wallet: {balance: 0},
   };
   const db = firestore();
   const userRef = db.collection('users').doc(uid);

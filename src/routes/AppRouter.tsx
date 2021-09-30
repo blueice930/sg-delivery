@@ -1,14 +1,12 @@
 import React, { FC } from 'react';
 import {
-  Redirect, Route, Switch, Link,
+  Redirect, Route, Switch,
 } from 'react-router-dom';
 
 import { useAuth } from 'src/contexts/AuthContext';
-import AdminPage from 'src/pages/Admin';
-import { useOrders } from 'src/contexts/OrderContext';
-import { useItems } from 'src/contexts/ItemContext';
-import ItemDetailView from 'src/pages/ItemDetailView';
-import OrderDetailView from 'src/pages/OrderDetailView';
+import AdminPage from 'src/pages/private/Admin';
+import ItemDetail from 'src/pages/private/ItemDetail';
+import OrderDetail from 'src/pages/private/OrderDetail';
 import Home from 'src/pages/Home';
 import About from 'src/pages/About';
 import User from 'src/pages/private/User';
@@ -25,8 +23,7 @@ import AdminRoute from './AdminRoute';
 
 const AppRouter: FC = () => {
   const { currUser } = useAuth();
-  const { orders } = useOrders();
-  const { items } = useItems();
+
   return (
     <div className="App">
       <Navbar />
@@ -77,12 +74,12 @@ const AppRouter: FC = () => {
         <PrivateRoute
           exact
           path={Routes.itemDetail}
-          component={ItemDetailView}
+          component={ItemDetail}
         />
         <PrivateRoute
           exact
           path={Routes.orderDetail}
-          component={OrderDetailView}
+          component={OrderDetail}
         />
         <Route component={PageNotFound} />
       </Switch>

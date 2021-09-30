@@ -6,6 +6,16 @@ import {FunctionResponse} from '../../helpers/types';
 import {ItemStatus} from '../item/types';
 import {Order, OrderStatus} from './types';
 
+export const getDiscount = (
+    totalPrice: number, discountCode?: string
+): number => {
+  // Apply discount code rules
+  switch (discountCode) {
+    default:
+      return totalPrice;
+  }
+};
+
 export const createOrderFn = async (data:any, context: CallableContext) => {
   if (!context.auth) {
     // Throwing an HttpsError cause authentication failed.
@@ -34,6 +44,8 @@ export const createOrderFn = async (data:any, context: CallableContext) => {
         'Create order failed');
   }
 
+  const discountCode = data?.discountCode || '';
+  let totalPrice = 0;
   // Check items are in warehouse
   itemsSnapshot.forEach((item) => {
     const status = item.data()?.status;
@@ -44,13 +56,18 @@ export const createOrderFn = async (data:any, context: CallableContext) => {
           `Item (UID: ${Uid}) has not arrived warehouse yet.`,
           'Create order failed');
     }
+    totalPrice += item.data()?.deliveryPrice || 0;
   });
+
+  const price = getDiscount(totalPrice, discountCode);
 
   const order: Order = {
     uid,
     userId,
     itemUids,
     status: OrderStatus.UNPAID,
+    price,
+    discountCode,
     createdAt,
     updatedAt: createdAt,
   };

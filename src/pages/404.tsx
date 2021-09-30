@@ -1,20 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link as RouterLink } from 'react-router-dom';
-import styled from 'styled-components';
 import {
   Box, Button, Typography, Container,
 } from '@mui/material';
 
 import { MotionContainer, varBounceIn } from 'src/components/animate';
 import Page from 'src/components/Page';
-
-const RootStyle = styled(Page)`
-  display: flex;
-  min-height: 100%;
-  align-items: center;
-  padding: 5%;
-`;
 
 const PageNotFound = () => (
   <Page title="404 Page Not Found | SG Delivery">

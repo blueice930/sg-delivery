@@ -232,7 +232,7 @@ const User = () => {
               label="Balance"
               fullWidth
               autoComplete="shipping postal-code"
-              defaultValue={(currUser.wallet?.balanceCent / 100) || 0}
+              defaultValue={(currUser.wallet?.balance / 100) || 0}
               disabled
               variant="filled"
             />

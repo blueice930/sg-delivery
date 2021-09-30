@@ -25,10 +25,14 @@ const fetchUser = functions.httpsCallable('user-fetchUser');
 
 const createOrder = functions.httpsCallable('order-createOrder');
 const getOrders = functions.httpsCallable('order-getOrders');
+const getOrderByUid = functions.httpsCallable('order-getOrderByUid');
+const payOrderByAlipay = functions.httpsCallable('order-payOrderByAlipay');
+const payOrderByBalance = functions.httpsCallable('order-payOrderByBalance');
 
 const createItem = functions.httpsCallable('item-createItem');
 const updateItem = functions.httpsCallable('item-updateItem');
 const getActiveItems = functions.httpsCallable('item-getActiveItems');
+const getItemsByUids = functions.httpsCallable('item-getItemsByUids');
 
 const updateArrivedItem = functions.httpsCallable('admin-updateArrivedItem');
 
@@ -38,11 +42,15 @@ export {
   topUp,
   createOrder,
   getOrders,
+  getOrderByUid,
   createItem,
   updateItem,
   getActiveItems,
+  getItemsByUids,
   fetchUser,
   updateArrivedItem,
+  payOrderByAlipay,
+  payOrderByBalance,
 };
 
 export default app;

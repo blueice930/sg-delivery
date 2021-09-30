@@ -3,8 +3,8 @@ const PrivateRoutes = {
   items: '/items',
   orders: '/orders',
   admin: '/admin',
-  itemDetail: '/item/:id',
-  orderDetail: '/order/:id',
+  itemDetail: '/item/:uid',
+  orderDetail: '/order/:uid',
 };
 
 const PublicRoutes = {

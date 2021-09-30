@@ -3,6 +3,8 @@ export interface Order {
   userId: string,
   itemUids: string[],
   status: OrderStatus,
+  price: number,
+  discountCode?: string,
   createdAt: number,
   updatedAt: number,
 }

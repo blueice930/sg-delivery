@@ -26,7 +26,7 @@ export const getOrdersFn = async (data:any, context: CallableContext) => {
         .where('userId', '==', userId)
         .orderBy('createdAt', 'asc')
         .startAfter(cursorRef)
-        .limit(80)
+        .limit(100)
         .get();
     ordersSnapshot.forEach((orderData) => {
       const data = orderData.data();
@@ -35,6 +35,8 @@ export const getOrdersFn = async (data:any, context: CallableContext) => {
         userId: data.userId,
         itemUids: data.itemUids,
         status: data?.status,
+        price: data?.price,
+        discountCode: data?.discountCode,
         createdAt: data?.createdAt,
         updatedAt: data?.updatedAt,
       };

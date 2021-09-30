@@ -15,7 +15,7 @@ export interface User {
 }
 
 export interface Wallet {
-  balanceCent: number,
+  balance: number,
   coupons?: Coupon[],
 }
 

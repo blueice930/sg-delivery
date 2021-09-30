@@ -37,14 +37,14 @@ const readyItemFilter: GridFilterModel = {
 
 const ItemsView = () => {
   const {
-    activeItems, totalCount, getItemWithPagination, setSelectedItemUids, loading,
+    items, totalCount, getItemWithPagination, setSelectedItemUids, loading,
   } = useItems();
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
   const [useFilter, setUseFilter] = useState(false);
 
   const classes = useStyles();
 
-  const rows = activeItems.map(({
+  const rows = items.map(({
     uid,
     packageId,
     deliveryCompany,
@@ -121,22 +121,23 @@ const ItemsView = () => {
   ];
 
   const handleNextPage = useCallback(async () => {
-    const cursor = activeItems[activeItems.length - 1]?.uid || '';
+    const cursor = items[items.length - 1]?.uid || '';
     await getItemWithPagination(cursor);
-  }, [activeItems]);
+  }, [items]);
 
   const handlePageOnChange = useCallback(async (page: number) => {
     // page start with 0.
-    if ((page + 1) * pageSize >= activeItems.length) {
+    const count = (page + 1) * pageSize;
+    if (count >= items.length && items.length < totalCount) {
       await handleNextPage();
     }
   },
-  [activeItems, pageSize]);
+  [items, pageSize, totalCount]);
 
   return (
     <Paper className={classes.root}>
       <Typography variant="h4" color="textPrimary" align="center">
-        Active Packages
+        All Packages
       </Typography>
       <div className={classes.row}>
         <Switch checked={useFilter} onChange={() => { setUseFilter(!useFilter); }} color="secondary" />
@@ -146,7 +147,7 @@ const ItemsView = () => {
         autoHeight
         sortingMode="server"
         loading={loading}
-        rowCount={useFilter ? activeItems?.count : totalCount}
+        rowCount={useFilter ? items?.count : totalCount}
         rows={rows}
         columns={columns}
         pageSize={pageSize}
@@ -155,7 +156,7 @@ const ItemsView = () => {
         checkboxSelection
         onPageChange={handlePageOnChange}
         onSelectionModelChange={(ids) => {
-          setSelectedItemUids(ids.map((id: any) => (activeItems[id - 1]?.uid) || []));
+          setSelectedItemUids(ids.map((id: any) => (items[id - 1]?.uid) || []));
         }}
         filterModel={useFilter ? readyItemFilter : emptyFilter}
       />
