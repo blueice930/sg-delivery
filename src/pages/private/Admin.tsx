@@ -1,4 +1,6 @@
-import React, { useState, useCallback } from 'react';
+import React, {
+  useState, useCallback, createRef, useEffect,
+} from 'react';
 import {
   Button, CircularProgress,
   Grid, makeStyles, Paper, TextField, Theme, Typography,
@@ -34,7 +36,12 @@ const AdminPage = () => {
   const handleBtnOnClick = useCallback(async () => {
     setIsUpdating(true);
     if (!(packageId && price)) {
-      alert('Please enter Package Id and valid Price');
+      setSeverity(Severity.ERROR);
+      setAlertMsg({
+        title: 'Error',
+        message: 'Please enter Package Id and valid Price',
+      });
+      setIsUpdating(false);
       return;
     }
     try {
@@ -59,10 +66,16 @@ const AdminPage = () => {
     }
   }, [packageId, price]);
 
+  const handleKeyDown = (e: any) => {
+    if (e.key === 'Enter') {
+      handleBtnOnClick();
+    }
+  };
+
   return (
     <div className={classes.root}>
       <AlertMsg alertMsg={alertMsg} severity={severity} />
-      <Paper className={classes.paper}>
+      <Paper className={classes.paper} onKeyDown={handleKeyDown}>
         <Typography variant="h6" gutterBottom>
           Update Package Info & Price
         </Typography>
