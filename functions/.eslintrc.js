@@ -28,5 +28,6 @@ module.exports = {
     'quotes': [2, 'single', {'allowTemplateLiterals': true}],
     'no-unused-vars': [1],
     'import/no-unresolved': [1],
+    'camelcase': [0],
   },
 };

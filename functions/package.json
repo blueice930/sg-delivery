@@ -7,7 +7,7 @@
     "shell": "npm run build && firebase functions:shell",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
-    "start": "firebase emulators:start --import=./emulators.backup",
+    "start": "firebase emulators:start --import=./emulators.backup --export-on-exit",
     "export": "firebase emulators:export ./emulators.backup"
   },
   "engines": {
@@ -15,6 +15,7 @@
   },
   "main": "lib/index.js",
   "dependencies": {
+    "alipay-sdk": "^3.1.7",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "firebase-admin": "^9.2.0",
